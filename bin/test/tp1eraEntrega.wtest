@@ -1,0 +1,155 @@
+import codigo.instancias.*
+import codigo.artistas.*
+import codigo.instrumentos.*
+import codigo.canciones.*
+import codigo.presentaciones.*
+import codigo.ubicacion.*
+import codigo.costos.*
+
+describe "Test de habilidades" {
+
+	fixture {
+
+		luisAlberto.grupo(solista)
+		luisAlberto.instrumento(fender)
+		
+	}
+
+	test "Joaquin con 25 de habilidad porque esta en grupo" {
+		assert.equals(25, joaquin.habilidadDeCanto())
+	}
+	 
+	test "Joaquin con 20 de habilidad porque es solista" {
+		
+		joaquin.tocaEn(solista)
+		assert.equals(20, joaquin.habilidadDeCanto())
+	}
+
+	test "Lucia con 50 de habilidad porque esta en grupo" {
+		lucia.tocaEn(grupo)
+		assert.equals(50, lucia.habilidadDeCanto())
+	}
+
+	test "Lucia con 70 de habilidad porque es solista" {
+		assert.equals(70, lucia.habilidadDeCanto())
+	}
+
+	test "Luis Alberto con 80 de habilidad porque esta tocando con la fender" {
+		assert.equals(80, luisAlberto.habilidadDeCanto())
+	}
+
+	test "LuisAlberto con 100 de habilidad porque esta tocnado con la gibson" {
+		luisAlberto.instrumento(gibson)
+		assert.equals(100, luisAlberto.habilidadDeCanto())
+	}
+
+	test "Se gasta la gibson y cuando luis alberto la usa tiene 40 de habilidad" {
+		luisAlberto.instrumento(gibson)
+		gibson.estado(gastada)
+		assert.equals(40, luisAlberto.habilidadDeCanto())
+	}
+
+}
+
+describe "Test de las canciones que interpretan bien" {
+
+	fixture {
+		luisAlberto.grupo(solista)
+		luisAlberto.instrumento(fender)
+	}
+
+	test "Joaquin interpreta bien \" La Familia\"" {
+		assert.that(joaquin.interpretaBien(laFamilia))
+	}
+
+	test "Joaquin interpreta bien \"Cisne\"" {
+		assert.that(joaquin.interpretaBien(cisne))
+	}
+
+	test "Lucia interpreta bien \" La Familia\"" {
+		assert.that(lucia.interpretaBien(laFamilia))
+	}
+
+	test "Lucia interpreta bien \"Cisne\"" {
+		assert.that(lucia.interpretaBien(cisne))
+	}
+
+	test "Luis Alberto interpreta bien \" La Familia\"" {
+		assert.that(luisAlberto.interpretaBien(laFamilia))
+	}
+
+	test "Luis Alberto interpreta bien \"Cisne\"" {
+		assert.that(luisAlberto.interpretaBien(cisne))
+	}
+	
+	test "Lucía no canta bien la canción “Cisne” en el grupo Pimpinela"{
+		lucia.tocaEn(grupo)
+		assert.notThat(lucia.interpretaBien(cisne))
+	}
+	
+	
+}
+
+describe "Test de cuanto cobran por presentacion" {
+
+	fixture {
+
+		luisAlberto.grupo(solista)
+		luisAlberto.instrumento(fender)
+		recitalLaTrastienda.agregarArtista(luisAlberto)
+		recitalLaTrastienda.agregarArtista(joaquin)
+		recitalLaTrastienda.agregarArtista(lucia)
+		recitalLunaPark.agregarArtista(luisAlberto)
+		recitalLunaPark.agregarArtista(joaquin)
+		recitalLunaPark.agregarArtista(lucia)
+	}
+
+	test "Joaquin cobra 50 por presentacion en Luna PArk" {
+		assert.equals(50, joaquin.cobroDePresentacion(recitalLunaPark))
+	}
+
+	test "Joaquin cobra 100 por presentacion en la Trastienda porque toca solo" {
+		recitalLaTrastienda.tocaSolamente(joaquin)
+		assert.equals(100, joaquin.cobroDePresentacion(recitalLaTrastienda))
+	}
+
+	test "La trastienda tiene 700 personas de capacidad el 8 de agosto del 2020 porque es sabado" {
+		const fechaNueva = new Date(day = 08, month = 08, year = 2020)
+		recitalLaTrastienda.fecha(fechaNueva)
+		assert.equals(700, laTrastienda.capacidad(fechaNueva))
+	}
+
+	test "La trastienda tiene 400 personas de capacidad el 5 de agosto del 2020 porque no es sabado" {
+		const fechaNueva = new Date(day = 05, month = 08, year = 2020)
+		recitalLaTrastienda.fecha(fechaNueva)
+		assert.equals(400, laTrastienda.capacidad(fechaNueva))
+	}
+
+	test "Lucia cobra 500 por presentacion en Luna Park" {
+		assert.equals(500, lucia.cobroDePresentacion(recitalLunaPark))
+	}
+
+	test "Lucia cobra 400 por presentacion en la Trastienda" {
+		
+		assert.equals(400, lucia.cobroDePresentacion(recitalLaTrastienda))
+	}
+
+	test "Luis Alberto cobra 1200 por presentacion en Luna PArk" {
+		assert.equals(1200, luisAlberto.cobroDePresentacion(recitalLunaPark))
+	}
+
+	test "Luis Alberto cobra 1000 por presentacion en La Trastienda" {
+		luisAlberto.instrumento(gibson)
+		assert.equals(1000, luisAlberto.cobroDePresentacion(recitalLaTrastienda))
+	}
+
+	test "Es 1750 el costo de la presentacion en Luna Park" {
+		assert.equals(1750, recitalLunaPark.costoDePresentacion())
+	}
+
+	test "Es 1450 el costo de la presentacion en La Trastienda" {
+		assert.equals(1450, recitalLaTrastienda.costoDePresentacion())
+	}
+
+}
+

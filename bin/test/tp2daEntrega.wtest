@@ -1,0 +1,124 @@
+import codigo.instancias.*
+import codigo.artistas.*
+import codigo.instrumentos.*
+import codigo.canciones.*
+import codigo.presentaciones.*
+import codigo.ubicacion.*
+
+
+describe "Test de canciones cortas" {
+
+	test "Crisantemo es cancion corta" {
+		assert.that(crisantemo.esCorta())
+	}
+
+	test "Alma de Diamante es cancion corta" {
+		assert.notThat(almaDeDiamante.esCorta())
+	}
+
+}
+
+describe "Test de Cantantes minimalistas" {
+
+	fixture {
+		luisAlberto.grupo(solista)
+		luisAlberto.agregarDiscoEditado(paraLosArboles)
+		luisAlberto.agregarDiscoEditado(justCrisantemo)
+	}
+
+	test "Soledad es Minimalista" {
+		assert.that(soledad.esMinimalista())
+	}
+
+	test "Luis Alberto es Minimalista" {
+		assert.notThat(luisAlberto.esMinimalista())
+	}
+
+	test "joaquin es Minimalista" {
+		assert.notThat(joaquin.esMinimalista())
+	}
+
+	test "Canciones de Luis Alberto con la palabra \"cielo\" son Crisantemo y Alma de Diamante" {
+		assert.equals([ almaDeDiamante, crisantemo ], luisAlberto.tieneCancionesCon("cielo"))
+	}
+
+	test "Luis alberto no tiene una cancion con la palabra pujante" {
+		assert.that(luisAlberto.tieneCancionesCon("pujante").isEmpty())
+	}
+
+}
+
+describe "Test duracion de obra de músico" {
+
+	fixture {
+		luisAlberto.grupo(solista)
+		luisAlberto.agregarDiscoEditado(paraLosArboles)
+		luisAlberto.agregarDiscoEditado(justCrisantemo)
+	}
+
+	test "La obra de Kike dura 0 segundo" {
+		assert.equals(0, kike.duracionDeObra())
+	}
+
+	test "La obra de Soledad dura 299 segundo" {
+		assert.equals(299, soledad.duracionDeObra())
+	}
+
+	test "La obra de Luis Alberto dura 703 segundo" {
+		assert.equals(703, luisAlberto.duracionDeObra())
+	}
+
+}
+
+describe "Test canción más larga de un álbum" {
+	
+	
+	fixture {
+		luisAlberto.grupo(solista)
+		luisAlberto.agregarDiscoEditado(paraLosArboles)
+		luisAlberto.agregarDiscoEditado(justCrisantemo)
+	}
+
+	test " \"Alma diamante\" es la canción más larga del álbum \"Para los arboles \" " {
+		assert.equals(almaDeDiamante, paraLosArboles.cancionMasLarga(porLetra))
+	}
+
+	test  "\"  Eres \" es la canción más larga del álbum \"La Sole \" " {
+		assert.equals(eres, soledad.cancionMasLarga(porLetra))
+	}
+
+	test  "\" La Familia\" es la canción más larga del álbum \" Especial La Familia \" - criterio: letra " {
+		assert.equals(laFamilia, especialLaFamilia.cancionMasLarga(porLetra))
+	}
+	
+	test  "\" La Familia\" es la canción más larga del álbum \" Especial La Familia \" - criterio: duracion " {
+		assert.equals(laFamilia, especialLaFamilia.cancionMasLarga(porDuracion))
+	}
+	
+	test  "Corazon Americano es la cancion mas larga del album La Sole - criterio: duracion " {
+		assert.equals(corazonAmericano, laSole.cancionMasLarga(porDuracion))
+	}
+}
+
+describe "Test de Musico que la pegaron" {
+
+	fixture {
+		luisAlberto.grupo(solista)
+		luisAlberto.agregarDiscoEditado(paraLosArboles)
+		luisAlberto.agregarDiscoEditado(justCrisantemo)
+	}
+
+	test " Luis Alberto la pegó" {
+		assert.that(luisAlberto.laPego())
+	}
+
+	test " Soledad no la pegó" {
+		assert.notThat(soledad.laPego())
+	}
+
+	test " Joaquin la pegó" {
+		assert.that(joaquin.laPego())
+	}
+
+}
+

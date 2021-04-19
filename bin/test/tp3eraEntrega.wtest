@@ -1,0 +1,135 @@
+import codigo.instancias.*
+import codigo.artistas.*
+import codigo.instrumentos.*
+import codigo.canciones.*
+import codigo.presentaciones.*
+import codigo.ubicacion.*
+import codigo.costos.*
+import codigo.requerimientos.*
+
+describe "Test de artisas que interpretan bien canciones que no son de él y propias" {
+
+	test "Test interpreta bien una cancion que no es de él, dura menos de 300 seg pero tiene mas de 60 de habilidad" {
+		assert.that(pepe.interpretaBien(laCuca))
+	}
+
+	test "Test interpreta bien una cancion suya y tiene menos de 60 de habilidad" {
+		assert.that(pepito.interpretaBien(laFamilia))
+	}
+
+}
+
+describe "Test de canciones remixadas y mashups" {
+
+	test "Remix de la familia dura el triple que la familia" {
+		assert.equals((264 * 3), laFamiliaRemix.duracion())
+	}
+
+	test"mashups crisantemos y alma de diamante" {
+		assert.equals(216, mashupDeAlmaDiamanteYCrisantemo.duracion())
+	}
+
+	test"mashups crisantemos y alma de diamante por titulo" {
+		assert.equals("Marshup crisantemo alma De Diamante", mashupDeCrisantemoYAlmaDiamante.titulo())
+	}
+
+	test "2 mashups con los mismos temas pero en distinto orden son distintos" {
+		assert.notEquals(mashupDeCrisantemoYAlmaDiamante, mashupDeAlmaDiamanteYCrisantemo)
+	}
+	
+	test"mashups crisantemos y alma de diamante por letra" {
+		assert.equals("Tócame junto a esta pared, yo quede por aquí... cuando no hubo más luz... quiero mirar a través de mi piel... Crisantemo, que se abrió... encuentra el camino hacia el cielo Ven a mí con tu dulce luz alma de diamante. Y aunque el sol se nuble después sos alma de diamante. Cielo o piel silencio o verdad sos alma de diamante. Por eso ven así con la humanidad alma de diamante", mashupDeCrisantemoYAlmaDiamante.letra())
+	}
+
+	test "El mashups de Alma de Diamante con Crisantemo tiene la letra: ven a mi con tu dulce luz alma de diamante..."{
+		assert.equals("Ven a mí con tu dulce luz alma de diamante. Y aunque el sol se nuble después sos alma de diamante. Cielo o piel silencio o verdad sos alma de diamante. Por eso ven así con la humanidad alma de diamante Tócame junto a esta pared, yo quede por aquí... cuando no hubo más luz... quiero mirar a través de mi piel... Crisantemo, que se abrió... encuentra el camino hacia el cielo", mashupDeAlmaDiamanteYCrisantemo.letra())
+	}
+
+}
+
+describe "Test para comparar canciones segun criterio (porTitulo, porLetra, porDuracion)" {
+
+	test "pepe compara por titulo" {
+		assert.equals(almaDeDiamante, paraLosArboles.cancionMasLarga(porTitulo))
+	}
+
+	test "pepe compara por letra" {
+		assert.equals(almaDeDiamante, paraLosArboles.cancionMasLarga(porLetra))
+	}
+
+	test "pepe compara por duracion" {
+		assert.equals(cisne, paraLosArboles.cancionMasLarga(porDuracion))
+	}
+
+}
+
+describe "Test para saber que artistas pueden presnetarse en un evento" {
+
+	fixture {
+		pdpalooza.agregarRequerimientoParaArtista(habilidadCanto)
+		pdpalooza.agregarRequerimientoParaArtista(cantidadDiscos)
+		pdpalooza.agregarRequerimientoParaArtista(cancionQueSabeCantar)
+		pdpaloozaSegundaFecha.agregarRequerimientoParaArtista(habilidadCanto)
+		pdpaloozaSegundaFecha.agregarRequerimientoParaArtista(cantidadDiscos)
+		pdpaloozaSegundaFecha.agregarRequerimientoParaArtista(cancionQueSabeCantar)
+	}
+	test "luis alberto va a pdpalooza" {
+		pdpalooza.sacarRequerimientosDePresentacion()
+		pdpalooza.agregarArtista(luisAlberto)
+		assert.that(pdpalooza.artistaEnPresentacion(luisAlberto))
+	}
+
+	test "joaquin como solista no va a pdpalooza" {
+		joaquin.tocaEn(solista)
+		assert.throwsException({ pdpalooza.agregarArtista(joaquin)})
+	}
+
+	test "lucia con 90 de habilidad no va al pdpalooza por no tener temas"{
+		assert.throwsException({ pdpalooza.agregarArtista(luciaMejorada)})
+	}
+	
+	test "la sole va a pdpalooza" {
+		pdpalooza.agregarArtista(laSoledadPastorutti)
+		assert.that(pdpalooza.artistaEnPresentacion(laSoledadPastorutti))
+	}
+	
+	test "cambiar requerimientos de la habilidad para participar del 2do dia del pdpalooza"{
+		pdpaloozaSegundaFecha.cambiarRequerimiento(habilidadCanto, 20)
+		joaquin.tocaEn(solista)
+		pdpaloozaSegundaFecha.agregarArtista(joaquin)
+		assert.that(pdpaloozaSegundaFecha.artistaEnPresentacion(joaquin))
+	}
+	
+	test "cambiar requerimientos de discos para participar del 2do dia del pdpalooza"{
+		pdpaloozaSegundaFecha.cambiarRequerimiento(cantidadDiscos, 0)
+		pdpaloozaSegundaFecha.agregarArtista(luciaMejorada)
+		assert.that(pdpaloozaSegundaFecha.artistaEnPresentacion(luciaMejorada))
+	}
+	
+	test "cambiar requerimientos de cancion que debe saber para participar del 2do dia del pdpalooza"{
+		const discoNull = new Album(fechaDeLanzamiento = null, cantidadDeUnidades = 0, unidadesVendidas = 0)
+		pdpaloozaSegundaFecha.cambiarRequerimiento(cancionQueSabeCantar, laFamilia)
+		luciaMejorada.agregarDiscoEditado(discoNull)
+		pdpaloozaSegundaFecha.agregarArtista(luciaMejorada)
+		assert.that(pdpaloozaSegundaFecha.artistaEnPresentacion(luciaMejorada))
+	}
+}
+
+describe "Test con nuevos tipos de artistas y nuevos tipos de cobro por presentacion"{
+	
+	fixture{
+		musicoPorInflacion.tipoCobro(costoSegunCapacidad)
+		musicoPalabrero.tipoMusico(new Impareros(tocaEn = musicoPalabrero.tocaEn(), habilidadCanto = musicoPalabrero.habilidadDeCanto()))
+	}
+	
+	test "musico que cobra por inflacion pasa a cobrar por capacidad"{
+		assert.equals(500, musicoPorInflacion.cobroDePresentacion(recitalLunaPark))
+	}
+	
+	test "musico palabrero pasa a ser un musico imparero"{
+		assert.that(musicoPalabrero.interpretaBien(eres))
+	} 	
+	
+}
+
+
